@@ -1273,6 +1273,8 @@ void_ref(b::ROBOT) = ROBOTNativeRef(-1)
 
 const robot = ROBOT()
 
+backend_name(b::ROBOT) = "Robot"
+
 # Robot needs to merge nodes and bars
 save_shape!(b::ROBOT, s::TrussNode) = maybe_merged_node(b, s)
 save_shape!(b::ROBOT, s::TrussBar) = maybe_merged_bar(b, s)
