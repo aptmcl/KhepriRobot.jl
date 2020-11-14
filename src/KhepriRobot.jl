@@ -28,30 +28,16 @@ function __init__()
   set_backend_family(default_curtain_wall_family().transom_frame, autocad, acad_layer_family("CurtainWall-Transom"))
   set_backend_family(default_curtain_wall_family().mullion_frame, autocad, acad_layer_family("CurtainWall-Mullion"))
   =#
-
   set_backend_family(default_truss_bar_family(),
     robot,
     robot_truss_bar_family(
-    material=[
-      "ElasticIsotropic",   # name
-      I_MT_STEEL,           # Type
-      "Steel",              # Name
-      "I'm really steel",   # Nuance
-      210000000000.0,       # E (Young's modulus)
-      0.3,                  # NU (Poisson's ratio)
-      81000000000.0,        # G (Kirchoff's or Shear modulus)
-      77010.0,              # RO (Density)
-      1.2e-05,              # LX (Thermal expansion)
-      0.04,                 # DUMPCOEF (Damping coefficient)
-      235000000.0,          # RE (Design resistence)
-      360000000.0],         # RT (Limit tension resistance)
-    section=[
-      "Tube",               #name
-      "ElasticIsotropic",   #material_name
-      false,                #iswood
-      [(true,               #solid?
-        0.0213,             #diameter
-        0.0026)]]))         #thickness
+      E=210000000000.0,     # E (Young's modulus)
+      G=81000000000.0,      # G (Kirchoff's or Shear modulus)
+      NU=0.3,               # NU (Poisson's ratio)
+      LX=1.2e-05,           # LX (Thermal expansion)
+      d=77010.0,            # RO (Density)
+      RE=235000000.0,       # RE (Design resistence)
+      RT=360000000.0))      # RT (Limit tension resistance)
 
 #  set_backend_family(default_truss_node_family(), frame3dd, acad_layer_family("TrussNode"))
 #  set_backend_family(fixed_truss_node_family, frame3dd, acad_layer_family("FixedTrussNode"))

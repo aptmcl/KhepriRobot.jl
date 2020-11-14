@@ -1286,16 +1286,21 @@ with_family_in_layer(f::Function, backend::ROBOT, family::Family) = f()
 abstract type RobotFamily <: Family end
 
 struct RobotTrussBarFamily <: RobotFamily
-    section::Any
     material::Any
     ref::Parameter{Any}
 end
 
-robot_truss_bar_family(;section, material) = RobotTrussBarFamily(section, material, Parameter{Any}(nothing))
+robot_truss_bar_family(material) = RobotTrussBarFamily(material, Parameter{Any}(nothing))
 backend_get_family_ref(b::ROBOT, f::Family, rf::RobotTrussBarFamily) =
   begin
     create_bar_material_label(rf.material...)
-    create_bar_tube_section_label(rf.section...)
+    create_bar_tube_section_label(
+      "Tube",                  # name
+      "ElasticIsotropic",      # material_name
+      false,                   # iswood
+      iszero(f.inner_radius),  # solid?
+      f.radius*2,              # diameter
+      f.radius-f.inner_radius) # thickness
     rf
   end
 
@@ -1323,6 +1328,29 @@ realize(b::ROBOT, s::TrussBar) =
 
 realize(b::ROBOT, s::Panel) =
   error("BUM")
+
+#=
+outer radius, thickness;
+E   # elastic modulus
+G   # shear   modulus
+p   # roll angle
+d   # mass density
+=#
+export robot_truss_bar_family
+robot_truss_bar_family(; E, NU, LX, G, d, RE, RT) =
+  robot_truss_bar_family(
+    ["ElasticIsotropic",   # name
+     I_MT_STEEL,           # Type
+     "Steel",              # Name
+     "I'm really steel",   # Nuance
+     E,                    # E (Young's modulus)
+     NU,                   # NU (Poisson's ratio)
+     G,                    # G (Kirchoff's or Shear modulus)
+     d,                    # RO (Density)
+     LX,                   # LX (Thermal expansion)
+     0.04,                 # DUMPCOEF (Damping coefficient)
+     RE,                   # RE (Design resistence)
+     RT])                  # RT (Limit tension resistance)
 
 ##################################################################
 # Robot analysis
@@ -1379,6 +1407,7 @@ realize_structure(b::ROBOT) =
     end
   end
 
+###########################################
 case_counter = Parameter(0)
 
 new_robot_analysis(v=nothing; self_weight=false, backend=robot) =
@@ -1398,7 +1427,7 @@ new_robot_analysis(v=nothing; self_weight=false, backend=robot) =
 backend_truss_analysis(b::ROBOT, load::Vec) =
   new_robot_analysis(load, backend=b)
 
-node_displacement_function(b::ROBOT, results) =
+backend_node_displacement_function(b::ROBOT, results) =
   let disps = displacements(nodes(results))
     n -> node_displacement_vector(disps, n.id, I_LRT_NODE_DISPLACEMENT)
   end
