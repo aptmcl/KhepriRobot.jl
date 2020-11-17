@@ -1290,17 +1290,20 @@ struct RobotTrussBarFamily <: RobotFamily
     ref::Parameter{Any}
 end
 
+# AML: This needs a different label for each different bar family
+const bar_tube_section_label = "KhepriTube"
+
 robot_truss_bar_family(material) = RobotTrussBarFamily(material, Parameter{Any}(nothing))
 backend_get_family_ref(b::ROBOT, f::Family, rf::RobotTrussBarFamily) =
   begin
     create_bar_material_label(rf.material...)
     create_bar_tube_section_label(
-      "Tube",                  # name
-      "ElasticIsotropic",      # material_name
-      false,                   # iswood
-      iszero(f.inner_radius),  # solid?
-      f.radius*2,              # diameter
-      f.radius-f.inner_radius) # thickness
+      bar_tube_section_label,      # name
+      "ElasticIsotropic",          # material_name
+      false,                       # iswood
+      [(iszero(f.inner_radius),    # solid?
+        f.radius*2,                # diameter
+        f.radius-f.inner_radius)]) # thickness
     rf
   end
 
@@ -1400,7 +1403,7 @@ realize_structure(b::ROBOT) =
         end
         str = String(take!(ids))
         from_text(selection, str)
-        let (name, material_name, wood, specs) = robot_bar_family.section
+        let name = bar_tube_section_label
           set_selection_label(brs, selection, I_LT_BAR_SECTION, name)
         end
       end
