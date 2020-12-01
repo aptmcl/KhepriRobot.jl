@@ -1427,8 +1427,8 @@ new_robot_analysis(v=nothing; self_weight=false, backend=robot) =
   end
 
 #
-backend_truss_analysis(b::ROBOT, load::Vec) =
-  new_robot_analysis(load, backend=b)
+backend_truss_analysis(b::ROBOT, load::Vec, self_weight::Bool) =
+  new_robot_analysis(load, self_weight=self_weight, backend=b)
 
 backend_node_displacement_function(b::ROBOT, results) =
   let disps = displacements(nodes(results))
