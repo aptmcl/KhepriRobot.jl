@@ -1269,11 +1269,11 @@ const ROBOTSubtractionRef = SubtractionRef{ROBOTKey, ROBOTId}
 const ROBOT = RobotBackend{ROBOTKey, ROBOTId}
 
 connection(b::ROBOT) = b.com
-void_ref(b::ROBOT) = ROBOTNativeRef(-1)
+KhepriBase.void_ref(b::ROBOT) = ROBOTNativeRef(-1)
 
 const robot = ROBOT()
 
-backend_name(b::ROBOT) = "Robot"
+KhepriBase.backend_name(b::ROBOT) = "Robot"
 
 # Robot needs to merge nodes and bars
 save_shape!(b::ROBOT, s::TrussNode) = maybe_merged_node(b, s)
@@ -1314,7 +1314,7 @@ truss_bar_family_cross_section_area(f::RobotTrussBarFamily) =
     annulus_area(rₒ, rᵢ)
   end
 
-backend_delete_all_shapes(b::ROBOT) =
+KhepriBase.b_delete_all_refs(b::ROBOT) =
   begin
     empty!(b.truss_nodes)
     empty!(b.truss_bars)
@@ -1427,10 +1427,10 @@ new_robot_analysis(v=nothing; self_weight=false, backend=robot) =
   end
 
 #
-backend_truss_analysis(b::ROBOT, load::Vec, self_weight::Bool) =
+KhepriBase.b_truss_analysis(b::ROBOT, load::Vec, self_weight::Bool) =
   new_robot_analysis(load, self_weight=self_weight, backend=b)
 
-backend_node_displacement_function(b::ROBOT, results) =
+KhepriBase.b_node_displacement_function(b::ROBOT, results) =
   let disps = displacements(nodes(results))
     n -> node_displacement_vector(disps, n.id, I_LRT_NODE_DISPLACEMENT)
   end
