@@ -2,7 +2,6 @@ export robot,
        project_kind,
        new_project!,
        new_3d_project!,
-       new_robot_analysis,
        node_displacement,
        node_displacement_vector,
        displacements,
@@ -1357,20 +1356,20 @@ robot_truss_bar_family(; E, NU, LX, G, d, RE, RT) =
 
 ##################################################################
 # Robot analysis
-ensure_realized_structure(b::ROBOT) =
-  if ! b.realized()
-    realize_structure(b)
-    b.realized(true)
-  end
+case_counter = Parameter(0)
 
-realize_structure(b::ROBOT) =
-  let ns = process_nodes(b.truss_nodes),
+KhepriBase.b_truss_analysis(b::ROBOT, load::Vec, self_weight::Bool, point_loads::Dict) =
+  let ns = process_nodes(b.truss_nodes, load, point_loads),
       bs = process_bars(b.truss_bars, ns),
       struc = structure(project(application())),
       nds = nodes(struc),
       brs = bars(struc),
       supports = unique(map(n -> n.family.support, filter(truss_node_is_supported, ns))),
-      family_bars = Dict()
+      family_bars = Dict(),
+      node_loads = Dict()
+    for n in ns
+      push!(get!(node_loads, n.load, []), n.id)
+    end
     empty!(b.truss_node_data)
     append!(b.truss_node_data, ns)
     empty!(b.truss_bar_data)
@@ -1408,27 +1407,13 @@ realize_structure(b::ROBOT) =
         end
       end
     end
-  end
-
-###########################################
-case_counter = Parameter(0)
-
-new_robot_analysis(v=nothing; self_weight=false, backend=robot) =
-  let node_loads = Dict(v==nothing ?
-                    [] :
-                    [v => findall(! truss_node_is_supported, backend.truss_nodes)])
-    ensure_realized_structure(backend)
     case_counter(case_counter()+1)
     analyze_case(case_counter(),
-                 "KhepriTest-$(case_counter())",
-                 I_CN_PERMANENT, # I_CN_EXPLOATATION I_CN_WIND I_CN_SNOW I_CN_TEMPERATURE I_CN_ACCIDENTAL I_CN_SEISMIC,
-                 I_CAT_STATIC_LINEAR, #I_CAT_STATIC_NONLINEAR I_CAT_STATIC_FLAMBEMENT,
-                 records -> new_node_loads(records, node_loads, self_weight))
+               "KhepriTest-$(case_counter())",
+               I_CN_PERMANENT, # I_CN_EXPLOATATION I_CN_WIND I_CN_SNOW I_CN_TEMPERATURE I_CN_ACCIDENTAL I_CN_SEISMIC,
+               I_CAT_STATIC_LINEAR, #I_CAT_STATIC_NONLINEAR I_CAT_STATIC_FLAMBEMENT,
+               records -> new_node_loads(records, node_loads, self_weight))
   end
-
-#
-KhepriBase.b_truss_analysis(b::ROBOT, load::Vec, self_weight::Bool) =
-  new_robot_analysis(load, self_weight=self_weight, backend=b)
 
 KhepriBase.b_node_displacement_function(b::ROBOT, results) =
   let disps = displacements(nodes(results))
