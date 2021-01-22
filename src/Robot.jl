@@ -1241,7 +1241,8 @@ bar_max_stress(results, id, case_id) =
   Smax(bar_stress(Stresses(bars(results)), id, case_id, 0.0)) ##The position should be changeable
 
 ########################################################################
-const project_kind = Parameter(I_PT_SHELL)
+export project_kind
+const project_kind = Parameter(I_PT_FRAME_3D)
 create_ROBOT_connection() = new_project!(project_kind())
 
 #
