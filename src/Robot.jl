@@ -966,7 +966,7 @@ end
 robot_app = nothing
 function application()
     global robot_app
-    if robot_app == nothing
+    if isnothing(robot_app)
         copy!(com, pyimport("win32com.client"))
         robot_app = let r = com.Dispatch("Robot.Application")
                         r.Visible = 1
