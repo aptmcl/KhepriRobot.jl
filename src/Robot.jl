@@ -1248,7 +1248,7 @@ create_ROBOT_connection() = new_project!(project_kind())
 #
 Base.@kwdef struct RobotBackend{K,T} <: LazyBackend{K,T}
   realized::Parameter{Bool}=Parameter(false)
-  com::Any=LazyParameter(Any, create_ROBOT_connection)
+  com::Any=LazyParameter(create_ROBOT_connection)
   truss_nodes::Vector{<:TrussNode}=TrussNode[]
   truss_bars::Vector{<:TrussBar}=TrussBar[]
   shapes::Vector{<:Shape}=Shape[] # This contains all the rest that is not treated yet
@@ -1261,8 +1261,6 @@ const ROBOTId = Any
 const ROBOTIds = Vector{ROBOTId}
 const ROBOTRef = GenericRef{ROBOTKey, ROBOTId}
 const ROBOTRefs = Vector{ROBOTRef}
-const ROBOTEmptyRef = EmptyRef{ROBOTKey, ROBOTId}
-const ROBOTUniversalRef = UniversalRef{ROBOTKey, ROBOTId}
 const ROBOTNativeRef = NativeRef{ROBOTKey, ROBOTId}
 const ROBOTUnionRef = UnionRef{ROBOTKey, ROBOTId}
 const ROBOTSubtractionRef = SubtractionRef{ROBOTKey, ROBOTId}
