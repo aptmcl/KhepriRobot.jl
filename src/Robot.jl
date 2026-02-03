@@ -1254,6 +1254,7 @@ Base.@kwdef struct RobotBackend{K,T} <: LazyBackend{K,T}
   shapes::Vector{<:Shape}=Shape[] # This contains all the rest that is not treated yet
   truss_node_data::Vector{TrussNodeData}=TrussNodeData[]
   truss_bar_data::Vector{TrussBarData}=TrussBarData[]
+  refs::References{K,T}=References{K,T}()
 end
 
 abstract type ROBOTKey end
@@ -1312,7 +1313,7 @@ truss_bar_family_cross_section_area(f::RobotTrussBarFamily) =
     annulus_area(rₒ, rᵢ)
   end
 
-KhepriBase.b_delete_all_refs(b::ROBOT) =
+KhepriBase.b_delete_all_shape_refs(b::ROBOT) =
   begin
     empty!(b.truss_nodes)
     empty!(b.truss_bars)
