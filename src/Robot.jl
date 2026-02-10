@@ -1263,8 +1263,6 @@ const ROBOTIds = Vector{ROBOTId}
 const ROBOTRef = GenericRef{ROBOTKey, ROBOTId}
 const ROBOTRefs = Vector{ROBOTRef}
 const ROBOTNativeRef = NativeRef{ROBOTKey, ROBOTId}
-const ROBOTUnionRef = UnionRef{ROBOTKey, ROBOTId}
-const ROBOTSubtractionRef = SubtractionRef{ROBOTKey, ROBOTId}
 const ROBOT = RobotBackend{ROBOTKey, ROBOTId}
 
 connection(b::ROBOT) = b.com
