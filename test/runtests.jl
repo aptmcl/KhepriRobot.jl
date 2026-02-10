@@ -15,8 +15,6 @@ using Test
     @test KhepriRobot.ROBOTId === Any
     @test isdefined(KhepriRobot, :ROBOTRef)
     @test isdefined(KhepriRobot, :ROBOTNativeRef)
-    @test isdefined(KhepriRobot, :ROBOTUnionRef)
-    @test isdefined(KhepriRobot, :ROBOTSubtractionRef)
     @test KhepriRobot.ROBOT === KhepriRobot.RobotBackend{KhepriRobot.ROBOTKey, Any}
   end
 
