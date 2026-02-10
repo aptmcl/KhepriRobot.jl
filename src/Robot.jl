@@ -1268,7 +1268,7 @@ const ROBOTSubtractionRef = SubtractionRef{ROBOTKey, ROBOTId}
 const ROBOT = RobotBackend{ROBOTKey, ROBOTId}
 
 connection(b::ROBOT) = b.com
-KhepriBase.void_ref(b::ROBOT) = ROBOTNativeRef(-1)
+KhepriBase.void_ref(b::ROBOT) = -1
 
 const robot = ROBOT()
 
